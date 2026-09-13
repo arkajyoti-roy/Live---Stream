@@ -1,6 +1,7 @@
 const SignalRoom = (() => {
   const serverHost = `${window.location.protocol}//${window.location.hostname}`;
   const endpointConfig = window.SIGNAL_ROOM_CONFIG || {};
+  const controlBase = endpointConfig.controlBase || window.location.origin;
   const whipBase = endpointConfig.whipBase || `${serverHost}:8889`;
   const whepBase = endpointConfig.whepBase || `${serverHost}:8889`;
   const hlsBase = endpointConfig.hlsBase || `${serverHost}:8888`;
@@ -20,6 +21,14 @@ const SignalRoom = (() => {
 
   const getChannel = (input) => (input.value.trim().replace(/[^a-zA-Z0-9_-]/g, '-') || 'live');
   const setText = (id, text) => { const element = document.getElementById(id); if (element) element.textContent = text; };
+
+  async function startMediaServer() {
+    const response = await fetch(`${controlBase}/api/start-mediamtx`, { method: 'POST' });
+    if (!response.ok) {
+      const details = await response.json().catch(() => ({}));
+      throw new Error(details.error || 'Could not start MediaMTX');
+    }
+  }
 
   async function publish(channel) {
     media.stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -57,11 +66,20 @@ const SignalRoom = (() => {
     const start = document.getElementById('start-button');
     const pause = document.getElementById('pause-button');
     const stop = document.getElementById('stop-button');
-    channelInput.addEventListener('input', () => setText('channel-readout', getChannel(channelInput)));
+    const viewerLink = document.querySelector('a[href="view.html"]');
+    const syncChannel = () => {
+      const channel = getChannel(channelInput);
+      setText('channel-readout', channel);
+      localStorage.setItem('signalRoomChannel', channel);
+      if (viewerLink) viewerLink.href = `view.html?channel=${encodeURIComponent(channel)}`;
+    };
+    channelInput.addEventListener('input', syncChannel);
+    syncChannel();
     start.addEventListener('click', async () => {
       start.disabled = true; channelInput.disabled = true; setText('broadcast-status', 'Requesting camera and opening the live channel...');
       try {
-        media.channel = getChannel(channelInput); await publish(media.channel);
+        await startMediaServer();
+        media.channel = getChannel(channelInput); localStorage.setItem('signalRoomChannel', media.channel); await publish(media.channel);
         document.getElementById('live-pill').hidden = false; pause.disabled = false; stop.disabled = false;
         setText('status-metric', 'LIVE'); setText('broadcast-status', 'You are live. Your preview is being transmitted now.');
       } catch (error) {
@@ -89,7 +107,7 @@ const SignalRoom = (() => {
 
   async function initViewer() {
     const video = document.getElementById('viewer-video');
-    const channel = new URLSearchParams(window.location.search).get('channel') || 'live';
+    const channel = new URLSearchParams(window.location.search).get('channel') || localStorage.getItem('signalRoomChannel') || 'live';
     setText('viewer-channel', channel); document.querySelector('.viewer-info h2').textContent = `Signal Room / ${channel}`;
     try {
       const peer = new RTCPeerConnection(); media.peer = peer;
