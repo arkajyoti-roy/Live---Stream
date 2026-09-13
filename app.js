@@ -58,7 +58,7 @@ const SignalRoom = (() => {
     const preview = document.getElementById('preview');
     preview.srcObject = null;
     document.getElementById('stage-empty').hidden = false;
-    document.getElementById('live-pill').hidden = true;
+    const lp = document.getElementById('live-pill'); if (lp) lp.hidden = true;
     setText('resolution-pill', 'NO SIGNAL'); setText('status-metric', 'IDLE');
   }
 
@@ -81,7 +81,7 @@ const SignalRoom = (() => {
       try {
         await startMediaServer();
         media.channel = getChannel(channelInput); localStorage.setItem('signalRoomChannel', media.channel); await publish(media.channel);
-        document.getElementById('live-pill').hidden = false; pause.disabled = false; stop.disabled = false;
+        const lp = document.getElementById('live-pill'); if (lp) lp.hidden = false; pause.disabled = false; stop.disabled = false;
         setText('status-metric', 'LIVE'); setText('broadcast-status', 'You are live. Your preview is being transmitted now.');
       } catch (error) {
         await stopPublish(); start.disabled = false; channelInput.disabled = false;
