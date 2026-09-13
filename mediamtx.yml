@@ -9,7 +9,13 @@ hlsVariant: lowLatency
 webrtc: true
 webrtcAddress: :8889
 
-webrtcEncryption: false
+webrtcEncryption: true
+webrtcServerKey: auto.key
+webrtcServerCert: auto.crt
+
+hlsEncryption: true
+hlsServerKey: auto.key
+hlsServerCert: auto.crt
 
 paths:
   all_others:

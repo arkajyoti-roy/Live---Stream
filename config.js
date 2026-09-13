@@ -1,7 +1,6 @@
 window.SIGNAL_ROOM_CONFIG = {
-  // Set these to the public URLs of your separately hosted MediaMTX server.
-  whipBase: 'http://localhost:8889',
-  whepBase: 'http://localhost:8889',
-  hlsBase: 'http://localhost:8888',
-  controlBase: window.location.hostname === 'localhost' ? 'http://localhost:3000' : ''
+  whipBase: `${window.location.protocol}//${window.location.hostname}:8889`,
+  whepBase: `${window.location.protocol}//${window.location.hostname}:8889`,
+  hlsBase: `${window.location.protocol}//${window.location.hostname}:8888`,
+  controlBase: window.location.origin
 };

@@ -1,11 +1,16 @@
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { spawn } = require('child_process');
 
 const port = Number(process.env.PORT || 3000);
 const root = __dirname;
 let mediaProcess = null;
+const certificate = path.join(root, 'auto.crt');
+const privateKey = path.join(root, 'auto.key');
+const useHttps = fs.existsSync(certificate) && fs.existsSync(privateKey);
 
 function startMediaServer() {
   if (mediaProcess && !mediaProcess.killed) return;
@@ -40,7 +45,7 @@ function serveFile(request, response) {
   });
 }
 
-const server = http.createServer((request, response) => {
+const requestHandler = (request, response) => {
   if (request.method === 'OPTIONS') {
     response.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS' });
     return response.end();
@@ -55,10 +60,20 @@ const server = http.createServer((request, response) => {
   }
   if (request.method === 'GET') return serveFile(request, response);
   sendJson(response, 405, { error: 'Method not allowed' });
-});
+};
 
-server.listen(port, '127.0.0.1', () => {
-  console.log(`Signal Room running at http://localhost:${port}`);
+const server = useHttps
+  ? https.createServer({ cert: fs.readFileSync(certificate), key: fs.readFileSync(privateKey) }, requestHandler)
+  : http.createServer(requestHandler);
+
+server.listen(port, '0.0.0.0', () => {
+  const protocol = useHttps ? 'https' : 'http';
+  console.log(`Signal Room running at ${protocol}://localhost:${port}`);
+  const addresses = Object.values(os.networkInterfaces())
+    .flat()
+    .filter((address) => address && address.family === 'IPv4' && !address.internal)
+    .map((address) => `${protocol}://${address.address}:${port}`);
+  addresses.forEach((address) => console.log(`Open it from another device at ${address}`));
 });
 
 function stopMediaServer() {
