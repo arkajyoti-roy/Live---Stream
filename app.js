@@ -1,7 +1,7 @@
 const SignalRoom = (() => {
   const serverHost = `${window.location.protocol}//${window.location.hostname}`;
   const endpointConfig = window.SIGNAL_ROOM_CONFIG || {};
-  const controlBase = endpointConfig.controlBase || window.location.origin;
+  const controlBase = endpointConfig.controlBase || '';
   const whipBase = endpointConfig.whipBase || `${serverHost}:8889`;
   const whepBase = endpointConfig.whepBase || `${serverHost}:8889`;
   const hlsBase = endpointConfig.hlsBase || `${serverHost}:8888`;
@@ -23,6 +23,7 @@ const SignalRoom = (() => {
   const setText = (id, text) => { const element = document.getElementById(id); if (element) element.textContent = text; };
 
   async function startMediaServer() {
+    if (!controlBase) return;
     const response = await fetch(`${controlBase}/api/start-mediamtx`, { method: 'POST' });
     if (!response.ok) {
       const details = await response.json().catch(() => ({}));
