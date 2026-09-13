@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Broadcast Desk | Signal Room</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="app">
+  <header class="topbar">
+    <a class="brand-mark" href="index.html"><span></span> SIGNAL ROOM</a>
+    <nav><a class="active" href="broadcast.html">BROADCAST DESK</a><a href="view.html">VIEWER WINDOW</a><a class="nav-live" href="view.html">● LIVE CHANNEL</a></nav>
+  </header>
+  <main class="app-main">
+    <div class="app-heading"><div><p class="kicker">01 / transmission control</p><h1>Broadcast desk</h1></div><div class="channel-label">CHANNEL / <strong id="channel-readout">live</strong></div></div>
+    <section class="broadcast-grid">
+      <div class="stage" id="broadcast-stage">
+        <video id="preview" autoplay muted playsinline></video>
+        <div class="stage-empty" id="stage-empty"><div class="stage-empty-inner"><div class="camera-icon">◉</div><h2>Preview is standing by</h2><p>Allow camera access, then press start transmission.</p></div></div>
+        <div class="stage-overlay"><span class="pill live" id="live-pill" hidden>LIVE</span><span class="pill" id="resolution-pill">NO SIGNAL</span></div>
+      </div>
+      <aside class="control-panel">
+        <h2 class="panel-title">Transmission setup</h2>
+        <label class="input-label" for="channel">Channel name</label>
+        <input class="text-input" id="channel" value="live" maxlength="40" autocomplete="off">
+        <div class="panel-spacer"></div>
+        <div class="control-row"><button class="control-button" id="start-button">Start transmission</button><button class="control-button secondary" id="pause-button" disabled>Pause</button></div>
+        <button class="control-button secondary" id="stop-button" disabled style="margin-top:9px">Stop and clear</button>
+        <p class="helper" id="broadcast-status">Your camera stays local until you start the transmission.</p>
+        <div class="metrics"><div>STATUS<strong id="status-metric">IDLE</strong></div><div>VIEWERS<strong id="viewer-metric">--</strong></div></div>
+      </aside>
+    </section>
+  </main>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>SignalRoom.initBroadcast();</script>
+</body>
+</html>

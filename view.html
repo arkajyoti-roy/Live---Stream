@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Viewer Window | Signal Room</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="app">
+  <header class="topbar">
+    <a class="brand-mark" href="index.html"><span></span> SIGNAL ROOM</a>
+    <nav><a href="broadcast.html">BROADCAST DESK</a><a class="active" href="view.html">VIEWER WINDOW</a><a class="nav-live" href="view.html">● LIVE CHANNEL</a></nav>
+  </header>
+  <main class="app-main">
+    <div class="app-heading"><div><p class="kicker">02 / public window</p><h1>Watch live</h1></div><div class="channel-label">CHANNEL / <strong id="viewer-channel">live</strong></div></div>
+    <section class="viewer-layout">
+      <div>
+        <div class="viewer-stage">
+          <video class="viewer-video" id="viewer-video" autoplay playsinline controls></video>
+          <div class="stage-overlay"><span class="pill live">LIVE</span><span class="pill" id="viewer-connection">CONNECTING</span></div>
+          <div class="stage-empty" id="viewer-empty"><div class="stage-empty-inner"><div class="camera-icon">◉</div><h2>Waiting for the broadcast</h2><p id="viewer-status">Connecting to the live channel.</p></div></div>
+        </div>
+        <div class="viewer-info"><div><h2>Signal Room / live</h2><p>Real-time broadcast channel</p></div><div class="viewer-count"><span>●</span> <b id="viewer-count">--</b> watching</div></div>
+      </div>
+      <aside class="chat-panel"><div class="chat-head">ROOM CHAT <span>OPEN</span></div><div class="chat-messages"><p><b>SYSTEM</b><br>Welcome to the live room.</p><p><b>SYSTEM</b><br>Chat is ready for the next transmission.</p></div></aside>
+    </section>
+    <p class="viewer-footer">Playback automatically prefers WebRTC for low latency and falls back to HLS when needed.</p>
+  </main>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>SignalRoom.initViewer();</script>
+</body>
+</html>

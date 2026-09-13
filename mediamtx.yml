@@ -1,0 +1,15 @@
+logLevel: info
+
+rtmp: false
+
+hls: true
+hlsAddress: :8888
+hlsVariant: lowLatency
+
+webrtc: true
+webrtcAddress: :8889
+
+webrtcEncryption: false
+
+paths:
+  all_others:
